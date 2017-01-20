@@ -37,9 +37,52 @@ def WindowsController(game,snake):
             game['state'] = 2
 
 
+def UnixResize(width,height):
+	pass
+
+def WindowsResize(width,height):
+	system('mode %s,%s' % (width,height))
+
 if __UserOS__ == 'nts':
     keyInput = WindowsController
     clear_screen = lambda:system('cls')
+	resize = WindowsResize
 else:
     keyInput = UnixController
     clear_screen = lambda:system('clear')
+	resize = UnixResize
+
+
+def Game(game,snake):
+	while game['running']:
+		direction = snake['direction']
+		x,y = snake['position'][0]
+		if direction % 2:
+			new_pos = (x-(direction-2),y)
+		else:
+			new_pos = (x,y+(direction-1))
+		#snake['position'][0] = new_pos
+		#Shift all coordinates in [1:] to right by one. Delete last coordinate
+		#snake['position'][1] = direction^2
+	
+	
+
+def main():
+	game = {\
+				'running':False,\
+				'screen':[' '*(width-1) for i in range(height)],\
+				'score':0,\
+				'food':tuple()
+			}
+	
+	
+	snake = {\
+				'direction':1,\
+				'position':[(width/2,height/2)]\
+			}
+	
+	
+	game['running'] = True
+	controller = Thread(target=keyInput,args=(game,snake))
+	controller.start()
+	Game(game,snake)
