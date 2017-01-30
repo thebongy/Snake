@@ -1,12 +1,10 @@
 from os import system, name as __UserOS__
-from time import sleep,clock
+from time import sleep
 from threading import Thread
 from random import randint
 
-SPEED = 0.08
 def UnixController(game,snake):
     import sys, tty, termios
-    current = snake['direction']
     dir = {65:0,67:1,66:2,68:3}
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -15,10 +13,7 @@ def UnixController(game,snake):
         ch = ord(sys.stdin.read(1))
         if ch == 27:
             ch = ord(sys.stdin.read(2)[1:])
-            code = dir.get(ch)
-            if code != current^2:
-            	snake['direction'] = code
-            	current = code
+            snake['direction'] = dir.get(ch)
         elif ch == 112:
             game['running'] = False
     termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
@@ -66,58 +61,54 @@ def Game(game,snake,width,height):
 	printable = game['screen']
 
 	x,y = position[0]
-	fx,fy =randint(2,width-2),randint(2,height-2)
+	fx,fy =randint(1,width-1),randint(1,height-1)
 	game['food'] = (fx,fy)
 	printable[y][x] = 'S'
 	printable[fy][fx] = 'X'
-
+	
 	for pos in position[1:]:
 		x,y = pos
 		printable[y][x] = 'o'
 
 	while game['running']:
-		x=clock()
 		direction = snake['direction']
 		x1,y1 = position[0]
 		if direction % 2:
 			x2,y2 = (x1-(direction-2),y1)
 		else:
 			x2,y2 = (x1,y1+(direction-1))
-		
-		if x2 == -1 or y2 == -1 or x2 == width or y2 == height or (x2,y2) in position:
-			game['running'] = False
-			break
+
 		x3,y3 = position[-1]
 
 		printable[y1][x1] = 'o'
 		printable[y2][x2] = 'S'
 
 		position.insert(0,(x2,y2))
-
+		
 		if game['food'] in position[:-1]:
 			game['score'] += 10
-			fx,fy = (randint(2,width-2),randint(2,height-2))
+			fx,fy = (randint(2,width-1),randint(2,height-1))
 			game['food'] = (fx,fy)
+			print fy,fx
+			print len(printable)
 			printable[fy][fx] = 'X'
 		else:
 			printable[y3][x3] = ' '
 			position.pop()
-		
-		x = x-clock()
-		if x < SPEED:
-			sleep(SPEED-x)
-		
+			
 		clear_screen()
 
 		for row in printable:
 			print ''.join(row)
+		
+		print 'Score:',game['score'],game['food']
+		sleep(0.1)
 
-		print 'Score:',game['score']
 
 def main(width,height):
 	game = {
 				'running':False,\
-				'screen':[[' ' for i in range(width)] for i in range(height)],\
+				'screen':[[' ' for i in range(width-1)] for i in range(height)],\
 				'score':0,\
 				'food': tuple()
 			}
@@ -132,9 +123,8 @@ def main(width,height):
 	resize(width,height)
 	game['running'] = True
 	controller = Thread(target=keyInput,args=(game,snake))
+	controller.setDaemon(True)
 	controller.start()
 	Game(game,snake,width,height)
-
-
 
 main(50,30)
