@@ -3,7 +3,7 @@ from time import sleep
 from threading import Thread
 from random import randint
 
-#Test123
+
 def UnixController(game,snake):
     import sys, tty, termios
     dir = {65:0,67:1,66:2,68:3}
@@ -18,7 +18,6 @@ def UnixController(game,snake):
         elif ch == 112:
             game['running'] = False
     termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-
 
 
 def WindowsController(game,snake):
@@ -47,6 +46,7 @@ def UnixResize(width,height):
 def WindowsResize(width,height):
 	system('mode %s,%s' % (width,height))
 
+
 if __UserOS__ == 'nt':
 	keyInput = WindowsController
 	clear_screen = lambda:system('cls')
@@ -56,7 +56,7 @@ else:
 	clear_screen = lambda:system('clear')
 	resize = UnixResize
 
-#test
+
 def Game(game,snake,width,height):
 	position = snake['position']
 	printable = game['screen']
@@ -119,7 +119,6 @@ def main(width,height):
 				'direction':1,\
 				'position':[(x-i,y) for i in range(1,3)]\
 			}
-
 
 	resize(width,height)
 	game['running'] = True
