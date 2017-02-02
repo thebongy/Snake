@@ -1,4 +1,4 @@
 # Snake
-An implementation of snake in pure Python.
+An implementation of the original Snake in pure Python.
 
-PS: **Apurva is the only God**
+PS: **Apurva is the God**
