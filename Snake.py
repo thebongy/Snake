@@ -125,30 +125,37 @@ def HomeScreen(screen):
 	buttons=('New Game','Scores','Exit')
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
 	print_lines=[x*((scr_row-10)/(l+1))+5 for x in range(l)]
+	
 	for i in range(l):
 		blen=len(buttons[i])
 		screen[print_lines[i]][(scr_col-blen)/2:(scr_col+blen)/2]=buttons[i]
+		
         x,i=0,0
         while x!=13:
                 blen=len(buttons[i])
 		screen[print_lines[i]][(scr_col-blen-1)/2-1]=chr(62)
                 for row in screen:
-                        print ''.join(row)      
+                        print ''.join(row)
+                        
                 x=ord(getch())
                 if x==224:
                     x=ord(getch())                
                 dir = {72:0,80:1,77:1,75:0}
                 if x in dir:
                     x=dir[x]
+                    
                 screen[print_lines[i]][(scr_col-blen-1)/2-1]=' '
                 if x==1 and i!=l-1:
                         i+=1
                 elif x==0 and i!=0:
                         i-=1
-	if i==2:
-                exit()
-        else:
+                        
+	if i==0:
                 main(width,height)
+        else:
+                exit()
+
+
 width,height=50,30
 screen=[[' ' for i in range(width-1)] for i in range(height)]
 HomeScreen(screen)
