@@ -5,23 +5,22 @@ from random import randint
 
 
 def UnixController(game,snake):
-    import sys, tty, termios
-    dir = {65:0,67:1,66:2,68:3}
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    tty.setcbreak(sys.stdin.fileno())
-    while game['running']:
-        ch = ord(sys.stdin.read(1))
-        if ch == 27:
-            ch = ord(sys.stdin.read(2)[1:])
-            snake['direction'] = dir.get(ch)
-        elif ch == 112:
-            game['running'] = False
-    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    	import sys, tty, termios
+    	dir = {65:0,67:1,66:2,68:3}
+    	fd = sys.stdin.fileno()
+    	old_settings = termios.tcgetattr(fd)
+    	tty.setcbreak(sys.stdin.fileno())
+    	while game['running']:
+        	ch = ord(sys.stdin.read(1))
+        	if ch == 27:
+            		ch = ord(sys.stdin.read(2)[1:])
+            		snake['direction'] = dir.get(ch)
+        	elif ch == 112:
+            		game['running'] = False
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 
 def WindowsController(game,snake):
-	from msvcrt import getch
 	current = snake['direction']
 	dir = {72:0,80:2,77:1,75:3}
 	while game['running']:
@@ -35,12 +34,12 @@ def WindowsController(game,snake):
 		elif ch == 27 or ch == 112:
 			game['running'] = False
 			clear_screen()
-            #game['state'] = 2 #Pause game functionality to be implemented
+            	#game['state'] = 2 #Pause game functionality to be implemented
 
 
 def UnixResize(width,height):
-    from sys import stdout
-    stdout.write("\x1b[8;%s;%st" % (height,width))
+    	from sys import stdout
+    	stdout.write("\x1b[8;%s;%st" % (height,width))
 
 
 def WindowsResize(width,height):
@@ -48,6 +47,7 @@ def WindowsResize(width,height):
 
 
 if __UserOS__ == 'nt':
+	from msvcrt import getch
 	keyInput = WindowsController
 	clear_screen = lambda:system('cls')
 	resize = WindowsResize
@@ -107,24 +107,48 @@ def Game(game,snake,width,height):
 
 
 def main(width,height):
-	game = {
-				'running':False,\
-				'screen':[[' ' for i in range(width-1)] for i in range(height)],\
-				'score':0,\
-				'food': tuple()
-			}
+        screen=[[' ' for i in range(width-1)] for i in range(height)]
+        game = {'running':False,'screen':screen,'score':0,'food': tuple()}
 
 	x,y = (width/2,height/2)
-	snake = {\
-				'direction':1,\
-				'position':[(x-i,y) for i in range(1,3)]\
-			}
+	snake = {'direction':1,'position':[(x-i,y) for i in range(1,3)]}
 
-	resize(width,height)
 	game['running'] = True
 	controller = Thread(target=keyInput,args=(game,snake))
 	controller.setDaemon(True)
 	controller.start()
 	Game(game,snake,width,height)
 
-main(50,30)
+
+def HomeScreen(screen):
+        resize(width,height)
+	buttons=('New Game','Scores','Exit')
+	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
+	print_lines=[x*((scr_row-10)/(l+1))+5 for x in range(l)]
+	for i in range(l):
+		blen=len(buttons[i])
+		screen[print_lines[i]][(scr_col-blen)/2:(scr_col+blen)/2]=buttons[i]
+        x,i=0,0
+        while x!=13:
+                blen=len(buttons[i])
+		screen[print_lines[i]][(scr_col-blen-1)/2-1]=chr(62)
+                for row in screen:
+                        print ''.join(row)      
+                x=ord(getch())
+                if x==224:
+                    x=ord(getch())                
+                dir = {72:0,80:1,77:1,75:0}
+                if x in dir:
+                    x=dir[x]
+                screen[print_lines[i]][(scr_col-blen-1)/2-1]=' '
+                if x==1 and i!=l-1:
+                        i+=1
+                elif x==0 and i!=0:
+                        i-=1
+	if i==2:
+                exit()
+        else:
+                main(width,height)
+width,height=50,30
+screen=[[' ' for i in range(width-1)] for i in range(height)]
+HomeScreen(screen)
