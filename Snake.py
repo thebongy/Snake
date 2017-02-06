@@ -74,15 +74,20 @@ def Game(game,snake,width,height):
 	while game['running']:
 		direction = snake['direction']
 		x1,y1 = position[0]
-		if direction % 2:
-			x2,y2 = (x1-(direction-2),y1)
-		else:
-			x2,y2 = (x1,y1+(direction-1))
+
+		if game['running']:
+                        if direction % 2:
+                                x2,y2 = (x1-(direction-2),y1)
+                        else:
+                                x2,y2 = (x1,y1+(direction-1))
 
 		x3,y3 = position[-1]
 
-		printable[y1][x1] = 'o'
-		printable[y2][x2] = 'S'
+                if printable[y2][x2] == 'o':
+                        game['running'] = False
+                else:
+                        printable[y1][x1] = 'o'
+                        printable[y2][x2] = 'S'
 
 		position.insert(0,(x2,y2))
 		
@@ -105,11 +110,30 @@ def Game(game,snake,width,height):
 		print 'Score:',game['score'],game['food']
 		sleep(0.1)
 
+	for i in range(11):
+                if i%2:
+                        for row in printable:
+                                print ''.join(row)
+                else:
+                        clear_screen()
+                sleep(0.3)
+
+	username = raw_input("Enter your name (in small letters): ")
+	print "Enter description of this game (optional):"
+	tag = raw_input()
+	if tag == '':
+                tag = "<undescribed>"
+	Score.append([username,game['score'],tag])
+
 
 def main(width,height):
-        screen=[[' ' for i in range(width-1)] for i in range(height)]
+        screen=[[' ' for i in range(width)] for i in range(height)]
+        screen[0][:]=['o' for x in range(width)]
+        screen[-1][:]=['o' for x in range(width)]
+        for x in screen:
+                x[0],x[-1]='o','o'
+        
         game = {'running':False,'screen':screen,'score':0,'food': tuple()}
-
 	x,y = (width/2,height/2)
 	snake = {'direction':1,'position':[(x-i,y) for i in range(1,3)]}
 
@@ -150,7 +174,7 @@ That's all. Press the Enter key to return Home.
 
 
 def HomeScreen():
-        resize(width,height-1)
+        resize(width,height)
 	buttons=('New Game','Details','Scores','Exit')
 	screen=[[' ' for i in range(width)] for i in range(height)]
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
