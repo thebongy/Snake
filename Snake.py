@@ -43,7 +43,7 @@ def UnixResize(width,height):
 
 
 def WindowsResize(width,height):
-	system('mode %s,%s' % (width,height))
+	system('mode %s,%s' % (width,height+2))
 
 
 if __UserOS__ == 'nt':
@@ -62,7 +62,7 @@ def Game(game,snake,width,height):
 	printable = game['screen']
 
 	x,y = position[0]
-	fx,fy =randint(1,width-1),randint(1,height-1)
+	fx,fy =randint(1,width-2),randint(1,height-2)
 	game['food'] = (fx,fy)
 	printable[y][x] = 'S'
 	printable[fy][fx] = 'X'
@@ -88,14 +88,14 @@ def Game(game,snake,width,height):
 		
 		if game['food'] in position[:-1]:
 			game['score'] += 10
-			fx,fy = (randint(2,width-1),randint(2,height-1))
+			fx,fy = (randint(2,width-2),randint(2,height-2))
 			game['food'] = (fx,fy)
 			print fy,fx
 			print len(printable)
 			printable[fy][fx] = 'X'
 		else:
-			printable[y3][x3] = ' '
-			position.pop()
+                        printable[y3][x3] = ' '
+                        position.pop()
 			
 		clear_screen()
 
@@ -121,10 +121,10 @@ def main(width,height):
 
 
 def HomeScreen(screen):
-        resize(width,height)
+        resize(width,height-2)
 	buttons=('New Game','Scores','Exit')
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
-	print_lines=[x*((scr_row-10)/(l+1))+5 for x in range(l)]
+	print_lines=[x*((scr_row-5)/(l+1))+5 for x in range(l)]
 	
 	for i in range(l):
 		blen=len(buttons[i])
@@ -132,8 +132,16 @@ def HomeScreen(screen):
 		
         x,i=0,0
         while x!=13:
+                print '''
+
+         oooooooooooooS  ooooooooooooo
+         o   __         _       __   o
+         o  |__' |\ |  /_\  |/ |__   o
+         o  .__| | \| /   \ |\ |__   o
+         o                           o
+         ooooooooooooooooooooooooooooo'''
                 blen=len(buttons[i])
-		screen[print_lines[i]][(scr_col-blen-1)/2-1]=chr(62)
+		screen[print_lines[i]][(scr_col-blen-1)/2-1]=">"
                 for row in screen:
                         print ''.join(row)
                         
@@ -145,11 +153,15 @@ def HomeScreen(screen):
                     x=dir[x]
                     
                 screen[print_lines[i]][(scr_col-blen-1)/2-1]=' '
-                if x==1 and i!=l-1:
+                if x==1:
                         i+=1
-                elif x==0 and i!=0:
+                        if i==l:
+                                i-=l
+                elif x==0:
                         i-=1
-                        
+                        if i==-1:
+                                i+=l
+                                
 	if i==0:
                 main(width,height)
         else:
@@ -157,5 +169,5 @@ def HomeScreen(screen):
 
 
 width,height=50,30
-screen=[[' ' for i in range(width-1)] for i in range(height)]
+screen=[[' ' for i in range(width-1)] for i in range(height-7)]
 HomeScreen(screen)
