@@ -16,7 +16,7 @@ def UnixController(game,snake):
             		ch = ord(sys.stdin.read(2)[1:])
             		snake['direction'] = dir.get(ch)
         	elif ch == 112:
-            		game['running'] = False
+            		game['running'] = 0
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 
@@ -31,10 +31,29 @@ def WindowsController(game,snake):
 			if code != current^2:
 				snake['direction'] = code
 				current = code
-		elif ch == 27 or ch == 112:
-			game['running'] = False
+		elif ch == 27:
+			game['running'] = 0
 			clear_screen()
-            	#game['state'] = 2 #Pause game functionality to be implemented
+            	elif ch == 80 or ch == 112:
+                        game['running'] = 2
+
+
+def paused(game):
+        clear_screen()
+        print '''
+
+The game has been paused.
+(for your own convenience) :)
+
+Click the Enter key to resume your game.
+
+'''
+        while True:
+                x=ord(getch())
+                if x==13:
+                        game['running'] = 1
+                        break
+
 
 
 def UnixResize(width,height):
@@ -75,16 +94,19 @@ def Game(game,snake,width,height):
 		direction = snake['direction']
 		x1,y1 = position[0]
 
-		if game['running']:
+		if game['running'] == 1:
                         if direction % 2:
                                 x2,y2 = (x1-(direction-2),y1)
                         else:
                                 x2,y2 = (x1,y1+(direction-1))
 
+                elif game['running'] == 2:
+                        paused(game)
+
 		x3,y3 = position[-1]
 
                 if printable[y2][x2] == 'o':
-                        game['running'] = False
+                        game['running'] = 0
                 else:
                         printable[y1][x1] = 'o'
                         printable[y2][x2] = 'S'
@@ -134,11 +156,11 @@ def main(width,height):
         for x in screen:
                 x[0],x[-1]='o','o'
         
-        game = {'running':False,'screen':screen,'score':0,'food': tuple()}
+        game = {'running':0,'screen':screen,'score':0,'food': tuple()}
 	x,y = (width/2,height/2)
 	snake = {'direction':1,'position':[(x-i,y) for i in range(1,3)]}
 
-	game['running'] = True
+	game['running'] = 1
 	controller = Thread(target=keyInput,args=(game,snake))
 	controller.setDaemon(True)
 	controller.start()
@@ -166,7 +188,7 @@ This will elongate the snake, but earn you points!
 
 
 4.Press arrow keys to navigate in the game.
-  Press 'p' to pause & resume.
+  Press 'p' to pause the game in between if needed.
 
 
 That's all. Press the Enter key to return Home.
