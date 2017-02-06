@@ -120,28 +120,57 @@ def main(width,height):
 	Game(game,snake,width,height)
 
 
-def HomeScreen(screen):
-        resize(width,height-2)
-	buttons=('New Game','Scores','Exit')
+def details():
+        clear_screen()
+        print """
+
+Here are the details of the 'Snake' (this game) :)
+
+
+1.The snake, with its head 'S', body of 'o'*n,
+will move about the screen bound by snake bodies!
+
+
+2.Feed it by directing it towards its food 'X'.
+This will elongate the snake, but earn you points!
+
+
+3.Beware! The snake should not suicide.
+Or even bite off the boundary!
+If so, the GAME IS OVER!
+
+
+That's all. Press the Enter key to return Home.
+"""
+        while True:
+                x=ord(getch())
+                if x==13:
+                        break
+        HomeScreen()
+
+
+def HomeScreen():
+        resize(width,height-1)
+	buttons=('New Game','Details','Scores','Exit')
+	screen=[[' ' for i in range(width)] for i in range(height)]
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
-	print_lines=[x*((scr_row-5)/(l+1))+5 for x in range(l)]
+	print_lines=[x*(scr_row/(l+1))+10 for x in range(l)]
+
+	screen[1][(scr_col-31)/2:] = "oooooooooooooS  ooooooooooooooo"
+	screen[2][(scr_col-31)/2:] = "o   __  _  _   _   _  _  __   o"
+	screen[3][(scr_col-31)/2:] = "o  |__' |\ |  /_\  |_/  |__   o"
+	screen[4][(scr_col-31)/2:] = "o  .__| | \| /   \ | \_ |__   o"
+	screen[5][(scr_col-31)/2:] = "o                             o"
+	screen[6][(scr_col-31)/2:] = "ooooooooooooooooooooooooooooooo"
 	
 	for i in range(l):
 		blen=len(buttons[i])
-		screen[print_lines[i]][(scr_col-blen)/2:(scr_col+blen)/2]=buttons[i]
+		screen[print_lines[i]][(scr_col-blen)/2:]=buttons[i]
 		
         x,i=0,0
         while x!=13:
-                print '''
-
-         oooooooooooooS  ooooooooooooo
-         o   __         _       __   o
-         o  |__' |\ |  /_\  |/ |__   o
-         o  .__| | \| /   \ |\ |__   o
-         o                           o
-         ooooooooooooooooooooooooooooo'''
                 blen=len(buttons[i])
-		screen[print_lines[i]][(scr_col-blen-1)/2-1]=">"
+		screen[print_lines[i]][(scr_col-blen)/2-4:(scr_col-blen)/2-1]="-->"
                 for row in screen:
                         print ''.join(row)
                         
@@ -152,7 +181,7 @@ def HomeScreen(screen):
                 if x in dir:
                     x=dir[x]
                     
-                screen[print_lines[i]][(scr_col-blen-1)/2-1]=' '
+                screen[print_lines[i]][(scr_col-blen)/2-4:(scr_col-blen)/2-1]='   '
                 if x==1:
                         i+=1
                         if i==l:
@@ -164,10 +193,12 @@ def HomeScreen(screen):
                                 
 	if i==0:
                 main(width,height)
+        elif i==1:
+                details()
         else:
+                clear_screen()
                 exit()
 
 
 width,height=50,30
-screen=[[' ' for i in range(width-1)] for i in range(height-7)]
-HomeScreen(screen)
+HomeScreen()
