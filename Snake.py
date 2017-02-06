@@ -147,6 +147,8 @@ def Game(game,snake,width,height):
 	if tag == '':
                 tag = "<undescribed>"
 	Score.append([username,game['score'],tag])
+	HomeScreen()
+	
 
 
 def main(width,height):
@@ -198,6 +200,12 @@ That's all. Press the Enter key to return Home.
                 if x==13:
                         break
         HomeScreen()
+
+
+def Scores():
+        #Yet to be implemented, due to delays in thought processes and updation
+        #issues. Not to worry, it is expected to be constructed within a century
+        #of hours. Please pray to the 'only' GOD to get going soon. xD :)
 
 
 def about():
