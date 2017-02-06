@@ -116,8 +116,9 @@ def Game(game,snake,width,height):
                                 print ''.join(row)
                 else:
                         clear_screen()
-                sleep(0.3)
+                sleep(0.2)
 
+        print "\n Ouch! That hurts. (a lot actually) :|\n"
 	username = raw_input("Enter your name (in small letters): ")
 	print "Enter description of this game (optional):"
 	tag = raw_input()
@@ -159,9 +160,13 @@ will move about the screen bound by snake bodies!
 This will elongate the snake, but earn you points!
 
 
-3.Beware! The snake should not suicide.
-Or even bite off the boundary!
-If so, the GAME IS OVER!
+3.Beware! The snake must not suicide.
+  Or even bite off the boundary!
+  If so, the GAME IS OVER!
+
+
+4.Press arrow keys to navigate in the game.
+  Press 'p' to pause & resume.
 
 
 That's all. Press the Enter key to return Home.
@@ -173,12 +178,39 @@ That's all. Press the Enter key to return Home.
         HomeScreen()
 
 
+def about():
+        clear_screen()
+        print '''
+
+This is an implementation of the original Snake
+purely prepared in Python.
+
+
+Created by (the Admin Panel):
+
+The following students of class 11A, NPS Inr:
+1.Rishit Bansal
+2.Apurva Kulkarni
+3.Koushik De
+
+for the Computer Science Project of 2016-17.
+
+
+Press the Enter key to return Home.
+'''
+        while True:
+                x=ord(getch())
+                if x==13:
+                        break
+        HomeScreen()
+
+
 def HomeScreen():
         resize(width,height)
-	buttons=('New Game','Details','Scores','Exit')
+	buttons=('New Game', 'Rules/Details', 'Scores', 'About', 'Exit')
 	screen=[[' ' for i in range(width)] for i in range(height)]
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
-	print_lines=[x*(scr_row/(l+1))+10 for x in range(l)]
+	print_lines=[x*(scr_row/(l+2))+9 for x in range(l)]
 
 	screen[1][(scr_col-31)/2:] = "oooooooooooooS  ooooooooooooooo"
 	screen[2][(scr_col-31)/2:] = "o   __  _  _   _   _  _  __   o"
@@ -219,6 +251,8 @@ def HomeScreen():
                 main(width,height)
         elif i==1:
                 details()
+        elif i==3:
+                about()
         else:
                 clear_screen()
                 exit()
