@@ -38,6 +38,14 @@ def WindowsController(game,snake):
                         game['running'] = 2
 
 
+def press_Enter_key():
+        while True:
+                x=ord(getch())
+                if x==13:
+                        break
+
+
+
 def paused(game):
         clear_screen()
         print '''
@@ -48,11 +56,9 @@ The game has been paused.
 Click the Enter key to resume your game.
 
 '''
-        while True:
-                x=ord(getch())
-                if x==13:
-                        game['running'] = 1
-                        break
+
+        press_Enter_key()
+        game['running'] = 1
 
 
 
@@ -132,13 +138,14 @@ def Game(game,snake,width,height):
 		print 'Score:',game['score'],game['food']
 		sleep(0.1)
 
-	for i in range(11):
-                if i%2:
+	for i in range(17):
+                if not i%3:
                         for row in printable:
                                 print ''.join(row)
+                        sleep(0.2)
                 else:
                         clear_screen()
-                sleep(0.2)
+                        sleep(0.05)
 
         print "\n Ouch! That hurts. (a lot actually) :|\n"
 	username = raw_input("Enter your name (in small letters): ")
@@ -147,8 +154,6 @@ def Game(game,snake,width,height):
 	if tag == '':
                 tag = "<undescribed>"
 	Score.append([username,game['score'],tag])
-	HomeScreen()
-	
 
 
 def main(width,height):
@@ -162,6 +167,7 @@ def main(width,height):
 	x,y = (width/2,height/2)
 	snake = {'direction':1,'position':[(x-i,y) for i in range(1,3)]}
 
+	resize(width,height)
 	game['running'] = 1
 	controller = Thread(target=keyInput,args=(game,snake))
 	controller.setDaemon(True)
@@ -179,33 +185,22 @@ Here are the details of the 'Snake' (this game) :)
 1.The snake, with its head 'S', body of 'o'*n,
 will move about the screen bound by snake bodies!
 
-
 2.Feed it by directing it towards its food 'X'.
 This will elongate the snake, but earn you points!
-
 
 3.Beware! The snake must not suicide.
   Or even bite off the boundary!
   If so, the GAME IS OVER!
-
 
 4.Press arrow keys to navigate in the game.
   Press 'p' to pause the game in between if needed.
 
 
 That's all. Press the Enter key to return Home.
+
 """
-        while True:
-                x=ord(getch())
-                if x==13:
-                        break
+        press_Enter_key()
         HomeScreen()
-
-
-def Scores():
-        #Yet to be implemented, due to delays in thought processes and updation
-        #issues. Not to worry, it is expected to be constructed within a century
-        #of hours. Please pray to the 'only' GOD to get going soon. xD :)
 
 
 def about():
@@ -221,17 +216,15 @@ Created by (the Admin Panel):
 The following students of class 11A, NPS Inr:
 1.Rishit Bansal
 2.Apurva Kulkarni
-3.Koushik De
 
+3.Koushik De
 for the Computer Science Project of 2016-17.
 
 
 Press the Enter key to return Home.
+
 '''
-        while True:
-                x=ord(getch())
-                if x==13:
-                        break
+        press_Enter_key()
         HomeScreen()
 
 
@@ -240,7 +233,7 @@ def HomeScreen():
 	buttons=('New Game', 'Rules/Details', 'Scores', 'About', 'Exit')
 	screen=[[' ' for i in range(width)] for i in range(height)]
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
-	print_lines=[x*(scr_row/(l+2))+9 for x in range(l)]
+	print_lines=[x*((scr_row-7)/l)+9 for x in range(l)]
 
 	screen[1][(scr_col-31)/2:] = "oooooooooooooS  ooooooooooooooo"
 	screen[2][(scr_col-31)/2:] = "o   __  _  _   _   _  _  __   o"
