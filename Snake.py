@@ -147,6 +147,7 @@ def Game(game,snake,width,height):
                         clear_screen()
                         sleep(0.05)
 
+        clear_screen()
         print "\n Ouch! That hurts. (a lot actually) :|\n"
 	username = raw_input("Enter your name (in small letters): ")
 	print "Enter description of this game (optional):"
@@ -154,6 +155,7 @@ def Game(game,snake,width,height):
 	if tag == '':
                 tag = "<undescribed>"
 	Score.append([username,game['score'],tag])
+	HomeScreen()
 
 
 def main(width,height):
@@ -167,7 +169,7 @@ def main(width,height):
 	x,y = (width/2,height/2)
 	snake = {'direction':1,'position':[(x-i,y) for i in range(1,3)]}
 
-	resize(width,height)
+	resize(width+1,height)
 	game['running'] = 1
 	controller = Thread(target=keyInput,args=(game,snake))
 	controller.setDaemon(True)
@@ -229,7 +231,7 @@ Press the Enter key to return Home.
 
 
 def HomeScreen():
-        resize(width,height)
+        resize(width+1,height)
 	buttons=('New Game', 'Rules/Details', 'Scores', 'About', 'Exit')
 	screen=[[' ' for i in range(width)] for i in range(height)]
 	scr_row,scr_col,l=len(screen),len(screen[0]),len(buttons)
