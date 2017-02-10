@@ -154,7 +154,10 @@ def Game(game,snake,width,height):
 	tag = raw_input()
 	if tag == '':
                 tag = "<undescribed>"
-	Score.append([username,game['score'],tag])
+	Scores.append({'Name':username,'Points':game['score'],'desc':tag})
+        Scores.sort(key=lambda x:x['Points'], reverse=True)
+        print 'Your score has been saved succesfully!'
+        press_Enter_key()
 	HomeScreen()
 
 
@@ -229,7 +232,32 @@ Press the Enter key to return Home.
         press_Enter_key()
         HomeScreen()
 
+def display_scores():
+        clear_screen()
+        print 'HIGHSCORES:'
+        for i in Scores:
+                for field in data_fields:
+                        print field,i[field]
+                print
 
+        print 'Press the Enter key to return Home.'
+        press_Enter_key()
+        HomeScreen()
+
+def exit_game():
+        data = ''
+        data_scores = list(Scores)
+        if len(Scores)>= 10:
+                data_scores = Scores[:10]
+        with open('data.txt','w') as f:
+                for i in data_scores:
+                        data = data+'[Score]\n'
+                        for field in data_fields:
+                                data = data+'['+field+']'
+                                data = data + str(i[field])
+                                data = data+'\n'
+                        
+                f.write(data)
 def HomeScreen():
         resize(width+1,height)
 	buttons=('New Game', 'Rules/Details', 'Scores', 'About', 'Exit')
@@ -276,12 +304,43 @@ def HomeScreen():
                 main(width,height)
         elif i==1:
                 details()
+        elif i ==2:
+                display_scores()
         elif i==3:
                 about()
         else:
                 clear_screen()
-                exit()
+                exit_game()
 
 
 width,height=50,30
-HomeScreen()
+data_file = 'data.txt'
+Scores = []
+current=None
+data_fields = ['Name','desc','Points']
+with open(data_file,'r') as f:
+        for line in f:
+                if line.find('[Score]') != -1:
+                        if current != None:
+                                Scores.append(current)
+                        current = {'Name':'','desc':'','Points':0}
+                for field in data_fields:
+                        s = line.find('['+field+']')
+                        if s != -1:
+                                current[field] = line[len(field)+2:-1]
+                                break
+        if current!=None:
+                Scores.append(current)
+
+print Scores
+for i in Scores:
+        i['Points'] = int(i['Points'])
+
+Scores.sort(key=lambda x:x['Points'], reverse=True)
+
+
+                        
+HomeScreen()                   
+                        
+                
+

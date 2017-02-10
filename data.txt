@@ -1,0 +1,4 @@
+[Score]
+[Name]FSDF
+[desc]dfsd
+[Points]0
